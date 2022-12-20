@@ -1,0 +1,21 @@
+{
+  "name": "social-media-app",
+  "version": "1.0.0",
+  "description": "practice project to learn mern stack and deployment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon server/index.js"
+  },
+  "author": "vihangshah",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "helmet": "^6.0.1",
+    "mongoose": "^6.8.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.20"
+  }
+}
