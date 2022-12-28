@@ -6,24 +6,26 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const userRouter = require('./routes/userRouter')
+const authRouter = require('./routes/authRouter');
 
 dotenv.config();
 
 mongoose.set('strictQuery', true);
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true } , (output)=> {
-    console.log(`mongodb is connected\n${output}`);
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true } , ()=> {
+    console.log(`mongodb is connected`);
 });
 
 
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
-app.use(morgan('common')) ; 
+app.use(morgan('common')) ;
+app.use(cookieParser());
 
-app.get('/', (req, res) => {
-    res.send("homepage");
-});
 
+app.use('/api/auth', authRouter);
 
 
 const PORT = process.env.PORT || 3001;
