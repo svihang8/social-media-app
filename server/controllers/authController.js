@@ -3,23 +3,25 @@ const bcrypt = require('bcrypt');
 
 
 exports.encryptPassword = async (req, res, next) => {
-    try {
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(req.body.password, salt);
-        console.log(`hash : \t${hash}}`);
-        if(!hash) {
+    if(!res.locals.skipFunc) {
+        try {
+            const salt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(req.body.password, salt);
+            console.log(`hash : \t${hash}}`);
+            if(!hash) {
+                res.json({
+                    'message' : 'password encryption error',
+                }).status(500).end()        
+            }
+            res.locals.hashedPassword = hash;
+        } catch (error) {
+            console.error(error);
             res.json({
-                'message' : 'password encryption error',
-            }).status(500).end()        
-        }
-        res.locals.hashedPassword = hash;
-        next();
-    } catch (error) {
-        console.error(error);
-        res.json({
-            'message' : 'error',
-        }).status(500).end()
+                'message' : 'error',
+            }).status(500).end()
+        }        
     }
+    next()
 }
 
 exports.signUp = async (req, res, next) => {
@@ -49,21 +51,29 @@ exports.signUp = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     const {emailAddress, password} = req.body
 
-    const user = await User.findOne({emailAddress : emailAddress});
+    try {
+        const user = await User.findOne({emailAddress : emailAddress});
 
-    if(user) {
-        const valid = await bcrypt.compare(password, user.password)
-        if(valid) {
+        if(!user) {
             res.json({
-                'message' : 'success',
-            }).status(200).end()
+                'message' : 'invalid email',
+            }).status(403).end()      
+        } else {
+            const valid = await bcrypt.compare(password, user.password)
+            if(!valid) {
+                res.json({
+                    'message' : 'invalid password',
+                }).status(403).end()  
+            } else {
+                res.json({
+                    'message' : 'success',
+                }).status(200).end();    
+            }
         }
+    } catch(error) {
+        console.error(error);
         res.json({
-            'message' : 'invalid password',
-        }).status(403).end()
+            'message' : 'error',
+        }).status(500).end()
     }
-    res.json({
-        'message' : 'invalid email',
-    }).status(403).end()
-    
 }

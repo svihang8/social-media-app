@@ -1,13 +1,11 @@
 const router = require('express').Router();
+const {encryptPassword} = require('../controllers/authController');
 const controller = require('../controllers/userController');
 
-router.route('/')
-      .get(controller.getUsers)
-
-router.route('/:id')
-      .get(controller.getUser)
-      .post(controller.createUser)
-      .put(controller.updateUser)
-      .delete(controller.deleteUser);
+router
+.route('/:id')
+.get(controller.getUser)
+.put(controller.handleData, encryptPassword, controller.updateUser)
+.delete(controller.deleteUser)
 
 module.exports = router;

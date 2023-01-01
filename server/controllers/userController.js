@@ -1,31 +1,5 @@
 const User = require('../models/User');
-/*
-Retrieve user information of all
-*/
-exports.getUsers = async (req, res, next) => {
-    try {
-        const listofUsers = await User.find()
-        if(listofUsers) {
-            res.json({
-                message : 'No users found',
-            })
-        } else {
-            res.json({
-                message : 'users found', 
-                users : listofUsers,
-            })
-        }
-    } catch(error) {
-        console.error(error);
-        res.json({
-            message : 'error'
-        }).status(500)
-    }
-}
 
-/*
-Retrieve user information by object id
-*/
 exports.getUser = async (req, res, next) => {
     try {
         const id = req.params.id
@@ -48,59 +22,55 @@ exports.getUser = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         res.json({
-            message : 'error'
+            'message' : 'error'
         })
     }
 }
 
-/*
-Create new user
-*/
-exports.createUser = async (req, res, next) => {
+exports.handleData = async(req, res, next) => {
     try {
-        const data = req.body;
-        const user = await User.create({
-            emailAddress : data.emailAddress,
-            password : data.password,
-            firstName : data.firstName,
-            lastName : data.lastName,
-            profilePicture : data.profilePicture
-        })
-
-    } catch (error) {
-        
-    }
-}
-
-/*
-Update user by id
-*/
-exports.updateUser = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        const data = req.body;
-        const user = await User.findByIdAndUpdate(id, data, {new : true});
-
-        if(user) {
-            res.json({
-                user : user,
-            })
-        } else {
-            res.json({
-                message : 'couldn\'t update user'
-            })
+        if(!req.body.password) {
+            res.locals.skipFunc = true
         }
     } catch (error) {
         console.error(error);
         res.json({
-            message : error
-        }).status(500)
+            'message' : 'error',
+        }).status(500).end()
+    }
+    next()
+}
+
+
+exports.updateUser = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        let data = req.body;
+        if (data.password) {
+            data.password = res.locals.hashedPassword
+            console.log(data.password);
+        }
+
+        const user = await User.findByIdAndUpdate(id, data, {new : true});
+
+        if(user) {
+            res.json({
+                'message' : 'success',
+                'user' : user,
+            }).status(200).end()
+        } else {
+            res.json({
+                'message' : 'couldn\'t update user'
+            }).status(403).end()
+        }
+    } catch (error) {
+        console.error(error);
+        res.json({
+            'message' : error
+        }).status(500).end()
     }
 }
 
-/*
-Delete user by index
-*/
 exports.deleteUser = async (req, res, next) => {
     try {
         const id = req.params.id;
