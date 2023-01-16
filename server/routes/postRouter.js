@@ -1,6 +1,18 @@
 const router = require('express').Router();
-const {encryptPassword} = require('../controllers/authController');
-const controller = require('../controllers/userController');
+const controller = require('../controllers/postController');
+    
+// create post
+// update post
+// delete post
+// like post
+// get all posts of user
+
+
+router
+.route('/')
+.post(controller.createPost)
+
+
 
 router
 .route('/:id')

@@ -9,6 +9,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/userRouter')
 const authRouter = require('./routes/authRouter');
+const postRouter = require('./routes/postRouter');
+
 
 dotenv.config();
 
@@ -27,14 +29,9 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
-
+app.use('/api/post', postRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`backend server running is running on ${PORT}`);
 });
-
-/*
-username : vihangshah
-password : 6jAYs31wuFI33Lfl
-*/

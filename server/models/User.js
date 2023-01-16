@@ -27,8 +27,12 @@ const userSchema = new Schema({
         data : Buffer,
         contentType : String
     },
+    friends : {
+        type : [],
+        default : []
+    },
     isAdmin : {
-        data : Boolean,
+        type : Boolean,
         default : false,
     }
   });
